@@ -25,6 +25,10 @@ import { compareTurns } from "./utils.js";
  * }
  */
 
+function canUserModifyCombat() {
+    return game.user.isGM && game.user.active;
+}
+
 export default class TurnAlert {
     static get defaultData() {
         return {
@@ -277,7 +281,7 @@ export default class TurnAlert {
             );
         }
 
-        if (combat.canUserModify(game.user, "update")) {
+        if (canUserModifyCombat()) {
             const id = randomID(16);
             alertData.id = id;
 
@@ -324,7 +328,7 @@ export default class TurnAlert {
             );
         }
 
-        if (combat.canUserModify(game.user, "update")) {
+        if (canUserModifyCombat()) {
             if (data.repeating) {
                 data.repeating = foundry.utils.mergeObject(this.prototype.constructor.defaultRepeatingData, data.repeating);
             }
@@ -355,7 +359,7 @@ export default class TurnAlert {
             throw new Error(`The combat "${data.combatID}" does not exist.`);
         }
 
-        if (combat.canUserModify(game.user, "update")) {
+        if (canUserModifyCombat()) {
             const alerts = combat.getFlag(CONST.moduleName, "alerts") || {};
 
             if (!(alertId in alerts)) {
