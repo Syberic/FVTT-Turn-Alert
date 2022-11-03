@@ -45,17 +45,46 @@ Hooks.on("preUpdateCombat", handlePreUpdateCombat);
 Hooks.on("updateCombat", handleUpdateCombat);
 
 Hooks.on("renderCombatTracker", (tracker, html, data) => {
-    if (!data.combat?.data?.round) return;
+    console.log("turnAlert | Rendering Combat Tracker...");
+    if (!data.combat?.round) return;
 
+    let i = 1;
+    console.log(`turnAlert | Step ${i}`);
+    i++;
     const alertButton = $(document.createElement("a"));
+    
+    console.log(`turnAlert | Step ${i}`);
+    i++;
     alertButton.addClass(["combat-control", "combat-alerts"]);
+
+    console.log(`turnAlert | Step ${i}`);
+    i++;
     alertButton.attr("title", game.i18n.localize(`${CONST.moduleName}.APP.CombatAlertsTitle`));
+
+    console.log(`turnAlert | Step ${i}`);
+    i++;
     alertButton.html('<i class="fas fa-bell"></i>');
+
+    console.log(`turnAlert | Step ${i}`);
+    i++;
     alertButton.click((event) => {
         const combatId = data.combat.id;
         const app = new CombatAlertsApplication({ combatId });
         app.render(true);
     });
 
-    html.find("header#combat-round h3").after(alertButton);
+    console.log(`turnAlert | Step ${i}`);
+    i++;
+    html.find(".combat-tracker-header .encounter-controls .encounter-title").after(alertButton);
+
+    console.log("turnAlert | Completed Rendering...");
+    console.log(html);
+    console.log(alertButton);
+    console.log(html.find(".combat-tracker-header .encounter-controls .encounter-title"));
+});
+
+Hooks.on("renderActorDirectory", (_, html) => {
+    console.log("turnAlert | Testing something...");
+    console.log(html);
+    console.log(html.find(".directory-header .action-buttons"));
 });
