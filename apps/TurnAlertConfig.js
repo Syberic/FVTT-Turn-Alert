@@ -56,6 +56,7 @@ export default class TurnAlertConfig extends FormApplication {
 
     /** @override */
     getData(options) {
+        console.log(this);
         const { round, roundAbsolute, endOfTurn, turnId, repeating } = this.object;
         return {
             object: foundry.utils.deepClone(this.object),
@@ -63,12 +64,12 @@ export default class TurnAlertConfig extends FormApplication {
             expireLabel: this._getExpireLabel(repeating?.expireAbsolute),
             validRound: this._validRound(round, roundAbsolute, endOfTurn),
             topOfRound: !turnId,
-            turnData: this._turnData,
+            turnData: this.turn,
             repeating: Boolean(repeating),
             users: game.users.map((user) => ({
-                id: user.data.id,
-                name: user.data.name,
-                selected: this.object.recipientIds?.includes(user.data.id),
+                id: user.id,
+                name: user.name,
+                selected: this.object.recipientIds?.includes(user.id),
             })),
             userCount: game.users.entries.length,
             options: this.options,
@@ -136,8 +137,8 @@ export default class TurnAlertConfig extends FormApplication {
         const prevRoundAbsolute = this._roundAbsolute || false;
         if (prevRoundAbsolute != formRoundAbsolute) {
             formRound = formRoundAbsolute
-                ? this.combat.data.round + formRound // round number was previously relative
-                : formRound - this.combat.data.round; // round number was previously absolute
+                ? this.combat.round + formRound // round number was previously relative
+                : formRound - this.combat.round; // round number was previously absolute
         }
 
         this._roundAbsolute = formRoundAbsolute;
@@ -153,7 +154,7 @@ export default class TurnAlertConfig extends FormApplication {
         }
 
         // Update repeating expiration round based on absolute/relative and initial trigger round.
-        const triggerRoundAbs = formRoundAbsolute ? formRound : this.combat.data.round + formRound;
+        const triggerRoundAbs = formRoundAbsolute ? formRound : this.combat.round + formRound;
         const prevExpireAbsolute = this._expireAbsolute || false;
         if (prevExpireAbsolute != formRepeatParams.expireAbsolute) {
             formRepeatParams.expire = formRepeatParams.expireAbsolute
@@ -219,11 +220,11 @@ export default class TurnAlertConfig extends FormApplication {
     }
 
     _validRound(round, roundAbsolute, endOfTurn) {
-        const thisRoundLater = this.combat.data.round < round;
-        const isCurrentRound = this.combat.data.round == round;
+        const thisRoundLater = this.combat.round < round;
+        const isCurrentRound = this.combat.round == round;
         const thisTurnIndex = this.combat.turns.findIndex((turn) => turn.id === this.object.turnId);
-        const thisTurnLater = this.combat.data.turn < thisTurnIndex;
-        const isCurrentTurn = this.combat.data.turn == thisTurnIndex;
+        const thisTurnLater = this.combat.turn < thisTurnIndex;
+        const isCurrentTurn = this.combat.turn == thisTurnIndex;
         const turnValid = thisTurnLater || (endOfTurn && isCurrentTurn);
 
         if (roundAbsolute) {

@@ -35,7 +35,7 @@ export default class TurnAlert {
             id: null,
             name: null,
             combatId: game.combat.id,
-            createdRound: game.combat.data.round,
+            createdRound: game.combat.round,
             round: 0,
             roundAbsolute: false,
             turnId: null,
@@ -162,15 +162,15 @@ export default class TurnAlert {
 
     static _customExecute(alert, macro) {
         // Chat macros
-        if (macro.data.type === "chat") {
-            ui.chat.processMessage(macro.data.command).catch((err) => {
+        if (macro.type === "chat") {
+            ui.chat.processMessage(macro.command).catch((err) => {
                 ui.notifications.error("There was an error in your chat message syntax.");
                 console.error(err);
             });
         }
 
         // Script macros
-        else if (macro.data.type === "script") {
+        else if (macro.type === "script") {
             if (!game.user.can("MACRO_SCRIPT")) {
                 return ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
             }
@@ -181,7 +181,7 @@ export default class TurnAlert {
             const character = game.user.character;
             const args = alert.args;
             try {
-                eval(macro.data.command);
+                eval(macro.command);
             } catch (err) {
                 ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
                 console.error(`Encountered an error while evaluating the macro for alert "${alert.id}:"`);
@@ -192,11 +192,11 @@ export default class TurnAlert {
 
     /** gets the alerts flag on the given combat. */
     static _getAlertObjectForCombat(combatId) {
-        combatId = combatId || game.combat.data.id;
+        combatId = combatId || game.combat.id;
         const combat = game.combats.get(combatId);
         if (!combat) throw new Error(`No combat exists with ID ${combatId}`);
 
-        return combat.data.flags.turnAlert?.alerts;
+        return combat.flags.turnAlert?.alerts;
     }
 
     /**

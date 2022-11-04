@@ -1,7 +1,4 @@
-import {
-    patch_CombatTracker_getEntryContextOptions,
-    patch_CombatTracker_activateListeners,
-} from "./scripts/patches.js";
+import { patch_CombatTracker_getEntryContextOptions, patch_CombatTracker_activateListeners } from "./scripts/patches.js";
 import { handlePreUpdateCombat, handleUpdateCombat } from "./scripts/handleUpdateCombat.js";
 import CONST from "./scripts/const.js";
 import CombatAlertsApplication from "./apps/CombatAlertsApplication.js";
