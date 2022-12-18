@@ -24,7 +24,7 @@ export default class CombatAlertsApplication extends Application {
      * A handler called each time the combat associated with this instance changes.
      */
     _onCombatUpdate(combat, changed, options, userId) {
-        if (combat.data.id === this.combatId && changed.active === false) {
+        if (combat.id === this.combatId && changed.active === false) {
             this.close();
         } else {
             this.render(false);
@@ -59,9 +59,9 @@ export default class CombatAlertsApplication extends Application {
             ]
                 .concat(this._turnData())
                 .filter((turn) => turn.isVisible),
-            currentRound: this._combat.data.round,
-            currentTurn: this._combat.data.turn + 1,
-            currentInitiative: this._combat.turns[this._combat.data.turn]?.initiative,
+            currentRound: this._combat.round,
+            currentTurn: this._combat.turn + 1,
+            currentInitiative: this._combat.turns[this._combat.turn]?.initiative,
         };
     }
 
@@ -82,7 +82,7 @@ export default class CombatAlertsApplication extends Application {
 
     /** Produces the data required by the view for the given alert */
     _createAlertDisplayData(alert) {
-        const nextTrigger = TurnAlert.nextTriggerRound(alert, this._combat.data.round, this._combat.data.turn);
+        const nextTrigger = TurnAlert.nextTriggerRound(alert, this._combat.round, this._combat.turn);
         const repeatString =
             alert.repeating?.frequency > 1
                 ? game.i18n.format(`${CONST.moduleName}.APP.RepeatEveryNRounds`, {
@@ -95,7 +95,7 @@ export default class CombatAlertsApplication extends Application {
             : `${CONST.moduleName}.APP.TriggerAtStartOfTurnNum`;
         const roundIcon = alert.endOfTurn ? "hourglass-end" : "hourglass-start";
 
-        const macroName = (game.macros.get(alert.macro) || game.macros.getName(alert.macro))?.data?.name;
+        const macroName = (game.macros.get(alert.macro) || game.macros.getName(alert.macro))?.name;
 
         return {
             id: alert.id,
@@ -152,7 +152,7 @@ export default class CombatAlertsApplication extends Application {
         html.find(".add-alert-button").click((event) => {
             const alertData = {
                 combatId: this.combatId,
-                createdRound: this._combat.data.round,
+                createdRound: this._combat.round,
                 round: 1,
                 turnId: event.currentTarget.dataset.turnid || null,
             };
@@ -162,7 +162,7 @@ export default class CombatAlertsApplication extends Application {
         // Listen for alert edit buttons to be clicked.
         html.find(".edit-alert-button").click((event) => {
             const alertId = event.currentTarget.dataset.id;
-            const alertData = getProperty(this._combat.data, `flags.${CONST.moduleName}.alerts.${alertId}`);
+            const alertData = getProperty(this._combat, `flags.${CONST.moduleName}.alerts.${alertId}`);
             if (!alertData) {
                 throw new Error(
                     `Trying to edit a non-existent turn alert! ID "${alertId}" does not exist on combat "${this.combatId}"`

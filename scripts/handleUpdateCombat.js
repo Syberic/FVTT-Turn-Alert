@@ -7,8 +7,8 @@ export async function handlePreUpdateCombat(combat, changed, options, userId) {
         return true;
     }
 
-    options.prevRound = combat.data.round;
-    options.prevTurn = combat.data.turn;
+    options.prevRound = combat.round;
+    options.prevTurn = combat.turn;
 }
 
 export async function handleUpdateCombat(combat, changed, options, userId) {
